@@ -6,7 +6,7 @@
         "HABILIDADE": {
             "ANO": {
                 "CO_ITEM": {
-                    "CO_PROVA": "CO_POSICA"
+                    "CO_PROVA": "CO_POSICAO"
                 }
             }
         }
@@ -29,7 +29,18 @@
  */
 {
     "NU_ACERTOS": {
-        // Auto explicativo
+        "NU_NOTA_MIN_CH": 0.0,
+        "NU_NOTA_MEAN_CH": 23.93538831064852,
+        "NU_NOTA_MAX_CH": 328.9,
+        "NU_NOTA_MIN_CN": 0.0,
+        "NU_NOTA_MEAN_CN": 33.428899082568805,
+        "NU_NOTA_MAX_CN": 339.7,
+        "NU_NOTA_MIN_LC": 0.0,
+        "NU_NOTA_MEAN_LC": 17.933751568381428,
+        "NU_NOTA_MAX_LC": 304.1,
+        "NU_NOTA_MIN_MT": 0.0,
+        "NU_NOTA_MEAN_MT": 104.548833592535,
+        "NU_NOTA_MAX_MT": 356.7
     }
 }
 
@@ -38,6 +49,11 @@
  */
 {
     "CO_POSICAO-TP_LINGUA": {
-        // Auto explicativo
+        "TX_GABARITO": "D",
+        "CO_HABILIDADE": 26,
+        "NU_PARAM_A": 2.10216,
+        "NU_PARAM_B": 0.54058,
+        "NU_PARAM_C": 0.20367,
+        "CO_ITEM": 49003
     }
 }
