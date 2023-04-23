@@ -1,0 +1,43 @@
+/*
+ * ITENS.json
+ */
+{
+    "AREA": {
+        "HABILIDADE": {
+            "ANO": {
+                "CO_ITEM": {
+                    "CO_PROVA": "CO_POSICA"
+                }
+            }
+        }
+    }
+}
+
+/*
+ * PROVAS.json
+ */
+{
+    "ANO": {
+        "AREA": {
+            "NOME": "CO_PROVA"
+        }
+    }
+}
+
+/*
+ * ANO-NOTA.json
+ */
+{
+    "NU_ACERTOS": {
+        // Auto explicativo
+    }
+}
+
+/*
+ * ANO-AREA-CO_PROVA.json
+ */
+{
+    "CO_POSICAO-TP_LINGUA": {
+        // Auto explicativo
+    }
+}
