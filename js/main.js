@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var dataProva = {};
 
     // Add options for ano
-    fetch("../data/PROVAS.json")
+    fetch("https://github.com/gpl27/enem/blob/main/data/PROVAS.json")
         .then(response => response.json())
         .then(data => {
             // Fetch years for dropdown
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const selectedProva = this.value;
                 const dataSelectedProva = data[anoDropdown.value][areaDropdown.value][selectedProva];
                 if (dataSelectedProva) {
-                    provaPath = "../data/provas/"+ anoDropdown.value + '-' + areaDropdown.value + '-' + dataSelectedProva + ".json";
+                    provaPath = "https://github.com/gpl27/enem/blob/main/data/provas/"+ anoDropdown.value + '-' + areaDropdown.value + '-' + dataSelectedProva + ".json";
                     fetch(provaPath)
                         .then(response => response.json())
                         .then(data => {
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (dataProva) {
                     let gabaritoProva = createGabarito(dataProva);
                     let rawScore = scoreGabarito(gabaritoInput.value, gabaritoProva);
-                    fetch(`../data/notas/${anoDropdown.value}-NOTA.json`)
+                    fetch(`https://github.com/gpl27/enem/blob/main/data/notas/${anoDropdown.value}-NOTA.json`)
                         .then(response => response.json())
                         .then(data => {
                             let keyMin = `NU_NOTA_MIN_${areaDropdown.value}`;
