@@ -3,6 +3,7 @@
  *      Sanitize text input
  *      Implement Linguagens input
  *      Determine PARAM_B intervals
+ *      Fix Bug in dropdowns (inside the change event of ANO)
  */
 async function fetchProva(ano, area, co_prova) {
     const path = `./data/provas/${ano}-${area}-${co_prova}.json`;
