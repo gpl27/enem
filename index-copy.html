@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <title>ENEM</title>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/main.out.css" rel="stylesheet">
+    <script src="./js/main.js"></script>
+    </head>
+    <body class="flex justify-center bg-slate-50">
+        <div class="w-[900px]">
+            <div class="fixed top-0 left-0 w-screen h-14 bg-slate-200">
+            </div>
+            <div class="w-full h-14 mt-32 flex shrink-0">
+                <select class="w-1/3 rounded-lg shadow border indent-2 enabled:bg-white disabled:opacity-50" name="ano" id="ano">
+                    <option value="">ANO</option>
+                </select>
+                <select class="w-1/3 mx-4 rounded-lg shadow border indent-2 enabled:bg-white disabled:opacity-50" name="area" id="area" disabled>
+                    <option value="">AREA</option>
+                </select>
+                <select class="w-1/3 rounded-lg shadow border indent-2 enabled:bg-white disabled:opacity-50" name="prova" id="prova" disabled>
+                    <option value="">PROVA</option>
+                </select>
+            </div>
+            <div class="w-full h-14 mt-4 flex">
+                <input class="w-10/12 mr-4 rounded-lg shadow border indent-2" type="text" name="gabarito" id="gabarito">
+                <input class="w-2/12 bg-blue-600 text-white disabled:opacity-75 rounded-lg shadow enabled:hover:bg-blue-700" type="button" name="submit" id="submit" value="Submit" disabled>
+            </div>
+            <div class="w-full mt-24 flex items-start">
+                <div class="w-4/12 mr-4 mb-6 flex flex-col justify-around items-center rounded-lg shadow border bg-white" id="score-card">
+                    <div class="w-full flex flex-col justify-around items-center">
+                        <span class="my-4 text-xl">DESEMPENHO</span>
+                        <div class="flex justify-around items-center">
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">MIN</span>
+                                <span class="text-xl" id="min-score">---</span>
+                            </div>
+                            <div class="mx-6 flex flex-col justify-center items-center">
+                                <span class="text-xs">MEAN</span>
+                                <span class="text-3xl" id="mean-score">---</span>
+                            </div>
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">MAX</span>
+                                <span class="text-xl" id="max-score">---</span>
+                            </div>
+                        </div>
+                        <div class="my-4">
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">ACERTOS</span>
+                                <span class="text-3xl" id="raw-score">--</span>
+                            </div>
+                            <div class="flex">
+                                <div class="flex flex-col justify-center items-center">
+                                    <span class="text-xs">FÁCIL</span>
+                                    <span class="text-xl" id="acertos-facil">--</span>
+                                </div>
+                                <div class="mx-4 flex flex-col justify-center items-center">
+                                    <span class="text-xs">MÉDIO</span>
+                                    <span class="text-xl" id="acertos-medio">--</span>
+                                </div>
+                                <div class="flex flex-col justify-center items-center">
+                                    <span class="text-xs">DIFÍCIL</span>
+                                    <span class="text-xl" id="acertos-dificil">--</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">ERROS</span>
+                                <span class="text-3xl" id="raw-erros">--</span>
+                            </div>
+                            <div class="flex">
+                                <div class="flex flex-col justify-center items-center">
+                                    <span class="text-xs">FÁCIL</span>
+                                    <span class="text-xl" id="erros-facil">--</span>
+                                </div>
+                                <div class="mx-4 flex flex-col justify-center items-center">
+                                    <span class="text-xs">MÉDIO</span>
+                                    <span class="text-xl" id="erros-medio">--</span>
+                                </div>
+                                <div class="flex flex-col justify-center items-center">
+                                    <span class="text-xs">DIFÍCIL</span>
+                                    <span class="text-xl" id="erros-dificil">--</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="w-8/12 rounded-lg shadow border bg-white mb-6 p-4" id="questoes-card">
+                    <span class="m-6">QUESTÕES SIMILARES</span>
+                    <ul class="list-disc my-4 mx-10">
+                        H00
+                        <li>Questões similares às questões que você errou aparecerão aqui.
+                            O código acima é a competência ou habilidade que o item avalia
+                            de acordo com o INEP
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -3,8 +3,15 @@
  *      Sanitize text input
  *      Implement Linguagens input
  *      Determine PARAM_B intervals
- *      Fix Bug in dropdowns (inside the change event of ANO)
  */
+
+const areasDict = {
+    "CH": "Ciências Humanas",
+    "CN": "Ciências da Natureza",
+    "LC": "Linguagens",
+    "MT": "Matemática"
+}
+
 async function fetchProva(ano, area, co_prova) {
     const path = `./data/provas/${ano}-${area}-${co_prova}.json`;
     return await fetch(path).then(response => response.json());
@@ -25,145 +32,283 @@ async function fetchITENSJSON() {
     return await fetch(path).then(response => response.json());
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", async function () {
 
     const anoDropdown = document.getElementById("ano");
     const areaDropdown = document.getElementById("area");
     const provaDropdown = document.getElementById("prova");
-    const gabaritoInput = document.getElementById("gabarito");
-    const submitButton = document.getElementById("submit");
-    const questoesCard = document.getElementById("questoes-card");
-
-    const areasDict = {
-        "CH": "Ciências Humanas",
-        "CN": "Ciências da Natureza",
-        "LC": "Linguagens",
-        "MT": "Matemática"
-    }
-
-    var dataProva = {};
+    const linguaRadio = document.getElementById("lingua");
+    const respostasSection = document.getElementById("respostas");
+    const resultadosSection = document.getElementById("resultados");
+    const gradeDiv = document.getElementById("grade");
+    const submitButton = document.getElementById("submit")
 
     const PROVAS = await fetchPROVASJSON();
+
+    const CONTEXT = {
+        "anoDropdown": anoDropdown,
+        "areaDropdown": areaDropdown,
+        "linguaRadio": linguaRadio,
+        "provaDropdown": provaDropdown,
+        "respostasSection": respostasSection,
+        "resultadosSection": resultadosSection,
+        "gradeDiv": gradeDiv,
+        "PROVAS": PROVAS,
+        "dataProva": {}
+    };
 
     // Fetch years for anoDropdown
     let years = Object.keys(PROVAS);
     years.forEach(element => createOption(anoDropdown, element));
     
-    anoDropdown.addEventListener("change", function() {
-        const selectedYear = this.value;
-        const dataSelectedYear = PROVAS[selectedYear]
-        if (dataSelectedYear) {
-            areaDropdown.innerHTML = '<option value="">AREA</option>';
-            areas = Object.keys(dataSelectedYear);
-            areas.forEach(element => {
-                let option = document.createElement("option");
-                option.value = element;
-                option.textContent = areasDict[element];
-                areaDropdown.appendChild(option)
-            });
-            areaDropdown.disabled = false;
-            provaDropdown.dispabled = true;
-            submitButton.disabled = true;
-        } else {
-            areaDropdown.innerHTML = '<option value="">AREA</option>';
-            provaDropdown.innerHTML = '<option value="">PROVA</option>';
-            areaDropdown.disabled = true;
-            provaDropdown.disabled = true;
-            submitButton.disabled = true;
-        }
-    })
-
-    areaDropdown.addEventListener("change", function() {
-        const selectedArea = this.value;
-        const dataSelectedArea = PROVAS[anoDropdown.value][selectedArea];
-        if (dataSelectedArea) {
-            provaDropdown.innerHTML = '<option value="">PROVA</option>';
-            provas = Object.keys(dataSelectedArea);
-            provas.forEach(element => createOption(provaDropdown, element));
-            provaDropdown.disabled = false;
-            submitButton.disabled = true;
-
-        } else {
-            provaDropdown.innerHTML = '<option value="">PROVA</option>';
-            areaDropdown.disabled = true;
-            provaDropdown.disabled = true;
-            submitButton.disabled = true;
-        }
-
-    })
-
-    provaDropdown.addEventListener("change", async function () {
-        const selectedProva = this.value;
-        const dataSelectedProva = PROVAS[anoDropdown.value][areaDropdown.value][selectedProva];
-        if (dataSelectedProva) {
-            dataProva = await fetchProva(anoDropdown.value, areaDropdown.value, dataSelectedProva);
-            if (gabaritoInput.value.length == 45) {
-                submitButton.disabled = false;
-            } else {
-                submitButton.disabled = true;
-            }
-        } else {
-            dataProva = {}
-            submitButton.disabled = true;
-        }
-    })
+    anoDropdown.addEventListener("change", e => anoDropdownListener(CONTEXT));
+    areaDropdown.addEventListener("change", e => areaDropdownListener(CONTEXT));
+    provaDropdown.addEventListener("change", async (e) => await provaDropdownListener(CONTEXT));
+    submitButton.addEventListener("click", async (e) => await submitButtonListener(CONTEXT));
     
-    gabaritoInput.addEventListener("input", function () {
-        if (this.value.length == 45) {
-            submitButton.disabled = false;
-        } else {
-            submitButton.disabled = true;
-        }
+})
 
-    })
+
+function anoDropdownListener(CONTEXT) {
+    const anoDropdown = CONTEXT["anoDropdown"];
+    const areaDropdown = CONTEXT["areaDropdown"];
+    const provaDropdown = CONTEXT["provaDropdown"];
+    const linguaRadio = CONTEXT["linguaRadio"];
+    const respostasSection = CONTEXT["respostasSection"];
+
+    const selectedYear = anoDropdown.value;
+    const dataSelectedYear = CONTEXT["PROVAS"][selectedYear];
+    if (dataSelectedYear) {
+        areaDropdown.innerHTML = '<option value="">AREA</option>';
+        provaDropdown.innerHTML = '<option value="">PROVA</option>';
+        let areas = Object.keys(dataSelectedYear);
+        areas.forEach(element => {
+            let option = document.createElement("option");
+            option.value = element;
+            option.textContent = areasDict[element];
+            areaDropdown.appendChild(option)
+        });
+        areaDropdown.disabled = false;
+        provaDropdown.disabled = true;
+        respostasSection.hidden = true;
+        linguaRadio.classList.add("hidden");
+    } else {
+        areaDropdown.innerHTML = '<option value="">AREA</option>';
+        provaDropdown.innerHTML = '<option value="">PROVA</option>';
+        areaDropdown.disabled = true;
+        provaDropdown.disabled = true;
+        respostasSection.hidden = true;
+        linguaRadio.classList.add("hidden");
+    }
+}
+
+function areaDropdownListener(CONTEXT) {
+    const anoDropdown = CONTEXT["anoDropdown"];
+    const areaDropdown = CONTEXT["areaDropdown"];
+    const provaDropdown = CONTEXT["provaDropdown"];
+    const linguaRadio = CONTEXT["linguaRadio"];
+    const PROVAS = CONTEXT["PROVAS"];
+    const respostasSection = CONTEXT["respostasSection"];
+
+    const selectedArea = areaDropdown.value;
+    const dataSelectedArea = PROVAS[anoDropdown.value][selectedArea];
+    if (dataSelectedArea) {
+        if (selectedArea === "LC")
+            linguaRadio.classList.remove("hidden");
+        else
+            linguaRadio.classList.add("hidden");
+        provaDropdown.innerHTML = '<option value="">PROVA</option>';
+        let provas = Object.keys(dataSelectedArea);
+        provas.forEach(element => createOption(provaDropdown, element));
+        provaDropdown.disabled = false;
+        respostasSection.hidden = true;
+
+    } else {
+        provaDropdown.innerHTML = '<option value="">PROVA</option>';
+        areaDropdown.disabled = true;
+        provaDropdown.disabled = true;
+        respostasSection.hidden = true;
+        linguaRadio.classList.add("hidden");
+    }
+}
+
+async function provaDropdownListener(CONTEXT) {
+    const anoDropdown = CONTEXT["anoDropdown"];
+    const areaDropdown = CONTEXT["areaDropdown"];
+    const provaDropdown = CONTEXT["provaDropdown"];
+    const PROVAS = CONTEXT["PROVAS"];
+    const respostasSection = CONTEXT["respostasSection"];
+    const gradeDiv = CONTEXT["gradeDiv"];
+
+    const selectedProva = provaDropdown.value;
+    const dataSelectedProva = PROVAS[anoDropdown.value][areaDropdown.value][selectedProva];
+    if (dataSelectedProva) {
+        // Temos uma prova selecionada
+        let dataProva = await fetchProva(anoDropdown.value, areaDropdown.value, dataSelectedProva);
+        CONTEXT["dataProva"] = dataProva;
+        let numItens = Object.keys(dataProva)
+                            .filter(q => q.substring(1) !== '-1')
+                            .map(q => Number(q.split('-')[0]))
+                            .sort((a, b) => a - b);
+        gradeDiv.innerHTML = "";
+        numItens.forEach(item => gradeDiv.appendChild(createQuestao(item)));
+        addInputListeners();
+        
+        respostasSection.hidden = false;
+    } else {
+        // Nao temos uma prova selecionada
+        respostasSection.hidden = true;
+    }
     
-    submitButton.addEventListener("click", async function () {
-        if (dataProva) {
-            // Clean questoes
-            questoesCard.innerHTML = '<span class="m-6">QUESTÕES SIMILARES</span>';
-            let results = await calculateResults({
-                "respostas": gabaritoInput.value,
-                "dataProva": dataProva,
-                "ano": anoDropdown.value,
-                "area": areaDropdown.value
-            });
-            document.getElementById("min-score").textContent = results["nota-min"];
-            document.getElementById("mean-score").textContent = results["nota-mean"];
-            document.getElementById("max-score").textContent = results["nota-max"];
-            document.getElementById("raw-score").textContent = results["acertos"];
-            document.getElementById("acertos-facil").textContent = results["acertos-facil"];
-            document.getElementById("acertos-medio").textContent = results["acertos-medio"];
-            document.getElementById("acertos-dificil").textContent = results["acertos-dificil"];
-            document.getElementById("raw-erros").textContent = results["erros"];
-            document.getElementById("erros-facil").textContent = results["erros-facil"];
-            document.getElementById("erros-medio").textContent = results["erros-medio"];
-            document.getElementById("erros-dificil").textContent = results["erros-dificil"];
-            results["erros-habilidades"].forEach(async function (hab) {
-                let itensSimilares = await getItensSimilares(areaDropdown.value, hab);
-                let itens = [];
-                for (let key in itensSimilares) {
-                    let itensAno = itensSimilares[key];
-                    for (let item in itensAno) {
-                        let firstProva = Object.keys(itensAno[item])[0];
-                        let provaName = getProvaName(firstProva, PROVAS[key][areaDropdown.value]);
-                        if (provaName)
-                            itens.push(`${key} ${provaName} ${itensAno[item][firstProva]}`);
-                    }
-                }
-                addHabilidade(hab, itens);
-            })
-        } else {
-            console.log("Something went wrong...");
-        }
-    })
+}
 
-});
+async function submitButtonListener(CONTEXT) {
+    const gradeDiv = CONTEXT["gradeDiv"];
+    // Form validation
+    const questoes = gradeDiv.children;
+    let gabarito = "";
+
+    for (const q of questoes) {
+        let qInput = q.lastElementChild.value;
+        if (qInput) {
+            gabarito += qInput;
+        } else {
+            console.log("Finish filling out form");
+            return;
+        }
+    }
+    gabarito = gabarito.toUpperCase();
+
+    // Sanitize input
+    // TODO
+
+    // Calculate results
+    const anoDropdown = CONTEXT["anoDropdown"];
+    const areaDropdown = CONTEXT["areaDropdown"]
+    const dataProva = CONTEXT["dataProva"];
+    if (dataProva) {
+        // Clean questoes
+        document.getElementById("questoes-similares").innerHTML = '<span class="m-6">QUESTÕES SIMILARES</span>';
+        let results = await calculateResults({
+            "respostas": gabarito,
+            "dataProva": dataProva,
+            "ano": anoDropdown.value,
+            "area": areaDropdown.value
+        });
+        // Display results
+        await displayResults(results);
+        CONTEXT["resultadosSection"].hidden = false;
+
+    } else {
+        console.log("Something went wrong...");
+        CONTEXT["resultadosSection"].hidden = true;
+    }
+}
 
 function createOption(dropdown, element) {
     let option = document.createElement("option");
     option.value = element;
     option.textContent = element;
     dropdown.appendChild(option)
+}
+
+function createQuestao(num) {
+    const questao = document.createElement("div");
+    questao.classList.add("flex");
+    questao.id = `q-${num}`;
+    questao.innerHTML = `
+        <span class="w-12 h-9 p-2 rounded-l-md bg-gray-300" id="q-${num}-t">${num}</span>
+        <input class="w-7 h-9 rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
+    
+    `
+    return questao;
+}
+
+// Generated by ChatGPT
+function addInputListeners() {
+    // Get all text input elements within the 'grade' container
+    const textInputs = document.querySelectorAll('#grade input[type="text"]');
+
+    // Attach input event listener to each text input
+    textInputs.forEach((textInput, index) => {
+        textInput.addEventListener('input', () => {
+            const maxLength = parseInt(textInput.getAttribute('maxlength'), 10);
+            const currentLength = textInput.value.length;
+
+            if (currentLength >= maxLength) {
+                // Focus on the next text input if available
+                if (index < textInputs.length - 1) {
+                    textInputs[index + 1].focus();
+                }
+            }
+        });
+
+        textInput.addEventListener('paste', (event) => {
+            event.preventDefault();
+
+            const pastedText = event.clipboardData.getData('text');
+            const maxLength = parseInt(textInput.getAttribute('maxlength'), 10);
+            const currentLength = textInput.value.length;
+            const remainingLength = maxLength - currentLength;
+
+            // If pasted text is longer than the remaining length, split it into multiple inputs
+            if (pastedText.length > remainingLength) {
+                let startIndex = 0;
+                let endIndex = 0;
+
+                for (let i = index; i < textInputs.length; i++) {
+                    const input = textInputs[i];
+                    const inputMaxLength = parseInt(input.getAttribute('maxlength'), 10);
+
+                    if (pastedText.length - endIndex > inputMaxLength) {
+                        input.value = pastedText.substring(startIndex, startIndex + inputMaxLength);
+                        startIndex += inputMaxLength;
+                        endIndex += inputMaxLength;
+                    } else {
+                        input.value = pastedText.substring(startIndex + currentLength);
+                        break;
+                    }
+                }
+
+                // Focus on the next text input if available
+                if (index < textInputs.length - 1) {
+                    textInputs[index + 1].focus();
+                }
+            } else {
+                textInput.value += pastedText;
+            }
+        });
+    });
+
+}
+
+async function displayResults(results) {
+    document.getElementById("min-score").textContent = results["nota-min"];
+    document.getElementById("mean-score").textContent = results["nota-mean"];
+    document.getElementById("max-score").textContent = results["nota-max"];
+    document.getElementById("raw-score").textContent = results["acertos"];
+    document.getElementById("acertos-facil").textContent = results["acertos-facil"];
+    document.getElementById("acertos-medio").textContent = results["acertos-medio"];
+    document.getElementById("acertos-dificil").textContent = results["acertos-dificil"];
+    document.getElementById("raw-erros").textContent = results["erros"];
+    document.getElementById("erros-facil").textContent = results["erros-facil"];
+    document.getElementById("erros-medio").textContent = results["erros-medio"];
+    document.getElementById("erros-dificil").textContent = results["erros-dificil"];
+    results["erros-habilidades"].forEach(async function (hab) {
+        let itensSimilares = await getItensSimilares(areaDropdown.value, hab);
+        let itens = [];
+        for (let key in itensSimilares) {
+            let itensAno = itensSimilares[key];
+            for (let item in itensAno) {
+                let firstProva = Object.keys(itensAno[item])[0];
+                let provaName = getProvaName(firstProva, PROVAS[key][areaDropdown.value]);
+                if (provaName)
+                    itens.push(`${key} ${provaName} ${itensAno[item][firstProva]}`);
+            }
+        }
+        addHabilidade(hab, itens);
+    })
+
 }
 
 async function calculateResults(data) {
@@ -222,17 +367,4 @@ function getProvaName(co_prova, data) {
         return acc;
     }, {});
     return invertedData[co_prova];
-}
-
-function addHabilidade(hab, itens) {
-    const questoesCard = document.getElementById("questoes-card");
-    const ul = document.createElement("ul");
-    ul.innerText = `H${hab}`;
-    ul.className = "list-disc my-4 mx-10"
-    itens.forEach(item => {
-        let li = document.createElement("li")
-        li.innerText = item
-        ul.appendChild(li);
-    })
-    questoesCard.appendChild(ul);
 }
