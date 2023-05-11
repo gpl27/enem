@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <title>ENEM</title>
-        <meta charset="UTF-8">
+
+<head>
+    <title>ENEM</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./css/main.out.css" rel="stylesheet">
     <script src="./js/main.js"></script>
-    </head>
-    <body class="">
-        <section id="hero" class="w-screen h-screen flex flex-col items-center">
-            <div class="w-full h-2/3 flex flex-col justify-center pl-8 bg-gray-300">
-                <div class="">
-                    <h1 class="mb-4 text-5xl">NotaEnem</h1>
-                    <h2 class="mb-2 text-2xl">Estime sua nota do ENEM</h2>
-                    <h2 class="text-2xl">Encontre questões similares às que você errou</h2>
-                </div>
+</head>
+
+<body class="text-slate-900">
+    <section id="hero" class="w-screen h-screen flex justify-center items-center">
+        <div class="w-[20rem] flex flex-col md:flex-row md:w-auto items-center md:justify-between mx-4 gap-[14rem]">
+            <div class="">
+                <h1 class="mb-4 font-bold text-5xl">NotaEnem</h1>
+                <h2 class="mb-2 font-medium text-2xl">Estime sua nota do ENEM</h2>
+                <h2 class="font-medium text-2xl">Encontre questões similares às que você errou</h2>
             </div>
-            <div class="w-72 mt-8 p-8 rounded-md bg-gray-200">
-                <div class="">
-                    <div class="mb-4 flex">
-                        <select class="w-24 h-7 mr-4 indent-1 rounded-md enabled:bg-white disabled:opacity-50" name="ano" id="ano"><option value="">ANO</option></select>
-                        <select class="w-32 h-7 indent-1 rounded-md enabled:bg-white disabled:opacity-50" name="area" id="area" disabled><option value="">AREA</option></select>
-                    </div>
-                    <select class="w-full h-7 indent-1 rounded-md enabled:bg-white disabled:opacity-50" name="prova" id="prova" disabled><option value="">PROVA</option></select>
-                    <div class="flex gap-8 mt-4 hidden" id="lingua">
+            <div class="w-[19rem] mt-8">
+                <div class="mb-4 flex">
+                    <select class="w-24 h-12 mr-4 indent-1 rounded-md shadow enabled:bg-white disabled:opacity-50"
+                        name="ano" id="ano">
+                        <option value="">ANO</option>
+                    </select>
+                    <select class="w-48 h-12 indent-1 rounded-md shadow enabled:bg-white disabled:opacity-50"
+                        name="area" id="area" disabled>
+                        <option value="">AREA</option>
+                    </select>
+                </div>
+                <select class="w-full h-12 indent-1 rounded-md shadow enabled:bg-white disabled:opacity-50" name="prova"
+                    id="prova" disabled>
+                    <option value="">PROVA</option>
+                </select>
+                <div class="mt-4 hidden" id="lingua">
+                    <div class="flex gap-4">
                         <div>
                             <input type="radio" name="lingua" id="ingles" value="0">
                             <label for="ingles">Inglês</label>
@@ -35,102 +45,109 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="respostas" class="w-full py-8 bg-gray-100" hidden>
-            <h2 class="ml-8 mb-8 text-2xl">Preencha suas respostas</h2>
-            <div class="ml-8 grid grid-cols-3 gap-x-4 gap-y-2" id="grade">
-                <div class="flex" id="q-136">
-                    <span class="w-12 h-9 p-2 rounded-l-md bg-gray-300" id="q-136-t">136</span>
-                    <input class="w-7 h-9 rounded-r-md" type="text" name="q-136-i" id="q-136-i">
+    <section id="respostas" class="w-full" hidden>
+        <div class="w-full py-8 flex flex-col items-center">
+            <h2 class="mb-8 text-slate-900 font-semibold text-2xl">Preencha suas respostas</h2>
+            <div class="w-fit">
+                <div class="w-fit grid grid-cols-3 md:grid-cols-9 gap-x-4 gap-y-2" id="grade">
+                </div>
+                <div class="mt-8">
+                    <input class="w-full p-2 bg-slate-900 text-white rounded-lg shadow hover:bg-slate-700" type="button"
+                        name="submit" id="submit" value="Submit">
                 </div>
             </div>
-            <div class="mx-8 mt-8">
-                <input class="w-full p-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700" type="button" name="submit" id="submit" value="Submit">
-            </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="resultados" class="py-8" hidden>
-            <h2 class="ml-8 mb-8 text-2xl">Resultados</h2>
-            <div class="w-fit ml-8 p-8 rounded-md flex flex-col justify-center gap-2 bg-gray-200">
-                <span class="text-2xl">NOTA ESTIMADA</span>
-                <div class="flex justify-around items-center">
-                    <div class="flex flex-col justify-center items-center">
-                        <span class="text-xs">MIN</span>
-                        <span class="text-2xl" id="min-score">700</span>
+    <section id="resultados" class="w-full" hidden>
+        <div class="w-full my-16 md:my-48 flex justify-center">
+            <div class="w-fit flex flex-col items-center p-8 md:p-0 md:flex-row md:items-start md:gap-8">
+                <div class="w-fit p-8 rounded-md flex flex-col justify-center gap-2 shadow bg-indigo-50">
+                    <span class="font-medium text-2xl">NOTA ESTIMADA</span>
+                    <div class="flex justify-around items-center">
+                        <div class="flex flex-col justify-center items-center">
+                            <span class="text-xs">MIN</span>
+                            <span class="text-2xl" id="min-score">700</span>
+                        </div>
+                        <div class="mx-6 flex flex-col justify-center items-center">
+                            <span class="text-xs">MEAN</span>
+                            <span class="font-medium text-3xl" id="mean-score">800</span>
+                        </div>
+                        <div class="flex flex-col justify-center items-center">
+                            <span class="text-xs">MAX</span>
+                            <span class="text-2xl" id="max-score">900</span>
+                        </div>
                     </div>
-                    <div class="mx-6 flex flex-col justify-center items-center">
-                        <span class="text-xs">MEAN</span>
-                        <span class="text-3xl" id="mean-score">800</span>
+                    <span class="font-medium text-2xl">ACERTOS/ERROS</span>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col justify-center items-center">
+                            <span class="text-xs">ACERTOS</span>
+                            <span class="text-5xl" id="raw-score">38</span>
+                        </div>
+                        <div class="flex">
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">FÁCIL</span>
+                                <span class="text-3xl" id="acertos-facil">15</span>
+                            </div>
+                            <div class="mx-4 flex flex-col justify-center items-center">
+                                <span class="text-xs">MÉDIO</span>
+                                <span class="text-3xl" id="acertos-medio">08</span>
+                            </div>
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">DIFÍCIL</span>
+                                <span class="text-3xl" id="acertos-dificil">05</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex flex-col justify-center items-center">
-                        <span class="text-xs">MAX</span>
-                        <span class="text-2xl" id="max-score">900</span>
+                    <div class="flex gap-4">
+                        <div class="flex flex-col justify-center items-center">
+                            <span class="text-xs">ERROS</span>
+                            <span class="text-5xl" id="raw-erros">38</span>
+                        </div>
+                        <div class="flex">
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">FÁCIL</span>
+                                <span class="text-3xl" id="erros-facil">15</span>
+                            </div>
+                            <div class="mx-4 flex flex-col justify-center items-center">
+                                <span class="text-xs">MÉDIO</span>
+                                <span class="text-3xl" id="erros-medio">08</span>
+                            </div>
+                            <div class="flex flex-col justify-center items-center">
+                                <span class="text-xs">DIFÍCIL</span>
+                                <span class="text-3xl" id="erros-dificil">05</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <span class="text-2xl">ACERTOS/ERROS</span>
-                <div class="flex gap-4">
-                    <div class="flex flex-col justify-center items-center">
-                        <span class="text-xs">ACERTOS</span>
-                        <span class="text-5xl" id="raw-score">38</span>
-                    </div>
-                    <div class="flex">
-                        <div class="flex flex-col justify-center items-center">
-                            <span class="text-xs">FÁCIL</span>
-                            <span class="text-3xl" id="acertos-facil">15</span>
+                <div class="w-full md:w-96 mt-8">
+                    <span class="font-semibold" id="">Questão 136</span>
+                    <div class="mt-4 flex flex-col">
+                        <div class="flex justify-between">
+                            <span class="font-medium">Gabarito</span>
+                            <span class="" id="">A</span>
                         </div>
-                        <div class="mx-4 flex flex-col justify-center items-center">
-                            <span class="text-xs">MÉDIO</span>
-                            <span class="text-3xl" id="acertos-medio">08</span>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Dificuldade</span>
+                            <span class="" id="">MEDIA</span>
                         </div>
-                        <div class="flex flex-col justify-center items-center">
-                            <span class="text-xs">DIFÍCIL</span>
-                            <span class="text-3xl" id="acertos-dificil">05</span>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Competência</span>
+                            <span class="" id="">H30</span>
                         </div>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="flex flex-col justify-center items-center">
-                        <span class="text-xs">ERROS</span>
-                        <span class="text-5xl" id="raw-erros">38</span>
-                    </div>
-                    <div class="flex">
-                        <div class="flex flex-col justify-center items-center">
-                            <span class="text-xs">FÁCIL</span>
-                            <span class="text-3xl" id="erros-facil">15</span>
-                        </div>
-                        <div class="mx-4 flex flex-col justify-center items-center">
-                            <span class="text-xs">MÉDIO</span>
-                            <span class="text-3xl" id="erros-medio">08</span>
-                        </div>
-                        <div class="flex flex-col justify-center items-center">
-                            <span class="text-xs">DIFÍCIL</span>
-                            <span class="text-3xl" id="erros-dificil">05</span>
+                        <div class="flex flex-col">
+                            <span class="font-medium">Questões Similares</span>
+                            <span class="" id="questoes-similares"></span>
                         </div>
                     </div>
                 </div>
+
             </div>
-            <div class="mt-8 mx-8">
-                <span class="" id="">Questão 136</span>
-                <div class="mt-4 flex flex-col">
-                    <div class="flex justify-between">
-                        <span class="">Gabarito</span>
-                        <span class="" id="">A</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="">Dificuldade</span>
-                        <span class="" id="">MEDIA</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="">Competência</span>
-                        <span class="" id="">H30</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="">Questões Similares</span>
-                        <span class="" id="questoes-similares">A</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </body>
+        </div>
+    </section>
+</body>
+
 </html>

@@ -5,6 +5,7 @@
  *      Determine PARAM_B intervals
  *      Implement results card
  *      Add favicon.ico
+ *      Dados de 2017 estao com problema
  */
 
 const areasDict = {
@@ -147,6 +148,7 @@ async function provaDropdownListener(CONTEXT) {
     if (dataSelectedProva) {
         // Temos uma prova selecionada
         let dataProva = await fetchProva(anoDropdown.value, areaDropdown.value, dataSelectedProva);
+        console.log(Object.keys(dataProva));
         CONTEXT["dataProva"] = dataProva;
         let numItens = Object.keys(dataProva)
                             .filter(q => q.substring(1) !== '-1')
@@ -219,10 +221,11 @@ function createOption(dropdown, element) {
 function createQuestao(num) {
     const questao = document.createElement("div");
     questao.classList.add("flex");
+    questao.classList.add("w-fit");
     questao.id = `q-${num}`;
     questao.innerHTML = `
-        <span class="w-12 h-9 p-2 rounded-l-md bg-gray-300" id="q-${num}-t">${num}</span>
-        <input class="w-7 h-9 rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
+        <span class="w-10 h-9 flex justify-center items-center shadow rounded-l-md bg-indigo-50" id="q-${num}-t">${num}</span>
+        <input class="w-7 h-9 shadow rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
     
     `
     return questao;
