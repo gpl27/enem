@@ -3,6 +3,8 @@
  *      Sanitize text input
  *      Implement Linguagens input
  *      Determine PARAM_B intervals
+ *      Implement results card
+ *      Add favicon.ico
  */
 
 const areasDict = {
@@ -152,6 +154,8 @@ async function provaDropdownListener(CONTEXT) {
                             .sort((a, b) => a - b);
         gradeDiv.innerHTML = "";
         numItens.forEach(item => gradeDiv.appendChild(createQuestao(item)));
+        // TODO
+        // Add click events to the spans
         addInputListeners();
         
         respostasSection.hidden = false;
@@ -188,7 +192,7 @@ async function submitButtonListener(CONTEXT) {
     const dataProva = CONTEXT["dataProva"];
     if (dataProva) {
         // Clean questoes
-        document.getElementById("questoes-similares").innerHTML = '<span class="m-6">QUESTÕES SIMILARES</span>';
+        document.getElementById("questoes-similares").innerHTML = '';
         let results = await calculateResults({
             "respostas": gabarito,
             "dataProva": dataProva,
@@ -196,7 +200,7 @@ async function submitButtonListener(CONTEXT) {
             "area": areaDropdown.value
         });
         // Display results
-        await displayResults(results);
+        await displayResults(results, CONTEXT);
         CONTEXT["resultadosSection"].hidden = false;
 
     } else {
@@ -282,7 +286,9 @@ function addInputListeners() {
 
 }
 
-async function displayResults(results) {
+async function displayResults(results, CONTEXT) {
+    const areaDropdown = CONTEXT["areaDropdown"];
+    const PROVAS = CONTEXT["PROVAS"];
     document.getElementById("min-score").textContent = results["nota-min"];
     document.getElementById("mean-score").textContent = results["nota-mean"];
     document.getElementById("max-score").textContent = results["nota-max"];
@@ -367,4 +373,17 @@ function getProvaName(co_prova, data) {
         return acc;
     }, {});
     return invertedData[co_prova];
+}
+
+function addHabilidade(hab, itens) {
+    const questoesCard = document.getElementById("questoes-similares");
+    const ul = document.createElement("ul");
+    ul.innerText = `H${hab}`;
+    ul.className = "list-disc my-4 mx-10"
+    itens.forEach(item => {
+        let li = document.createElement("li")
+        li.innerText = item
+        ul.appendChild(li);
+    })
+    questoesCard.appendChild(ul);
 }
