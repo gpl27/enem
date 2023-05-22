@@ -148,7 +148,6 @@ async function provaDropdownListener(CONTEXT) {
     if (dataSelectedProva) {
         // Temos uma prova selecionada
         let dataProva = await fetchProva(anoDropdown.value, areaDropdown.value, dataSelectedProva);
-        console.log(Object.keys(dataProva));
         CONTEXT["dataProva"] = dataProva;
         let numItens = Object.keys(dataProva)
                             .filter(q => q.substring(1) !== '-1')
@@ -163,6 +162,7 @@ async function provaDropdownListener(CONTEXT) {
         respostasSection.hidden = false;
     } else {
         // Nao temos uma prova selecionada
+        CONTEXT["dataProva"] = {};
         respostasSection.hidden = true;
     }
     
@@ -222,10 +222,9 @@ function createQuestao(num) {
     const questao = document.createElement("div");
     questao.classList.add("flex");
     questao.classList.add("w-fit");
-    questao.id = `q-${num}`;
     questao.innerHTML = `
-        <span class="w-10 h-9 flex justify-center items-center shadow rounded-l-md bg-indigo-50" id="q-${num}-t">${num}</span>
-        <input class="w-7 h-9 shadow rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
+        <span class="w-10 h-9 flex justify-center items-center shadow rounded-l-md bg-indigo-50 hover:bg-indigo-100" id="q-${num}">${num}</span>
+        <input class="w-7 h-9 indent-2 shadow rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
     
     `
     return questao;
@@ -235,6 +234,16 @@ function createQuestao(num) {
 function addInputListeners() {
     // Get all text input elements within the 'grade' container
     const textInputs = document.querySelectorAll('#grade input[type="text"]');
+
+    // Get all span elements within the 'grade' container
+    const spanElements = document.querySelectorAll("#grade span");
+
+    spanElements.forEach(spanElement => {
+        spanElement.addEventListener('click', () => {
+            console.log(`Clicked item ${spanElement.id}`);
+            
+        });
+    });
 
     // Attach input event listener to each text input
     textInputs.forEach((textInput, index) => {
