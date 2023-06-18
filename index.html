@@ -5,6 +5,10 @@
     <title>ENEM</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
     <link href="./css/main.out.css" rel="stylesheet">
     <script src="./js/main.js"></script>
 </head>
@@ -35,11 +39,11 @@
                 <div class="mt-4 hidden" id="lingua">
                     <div class="flex gap-4">
                         <div>
-                            <input type="radio" name="lingua" id="ingles" value="0">
+                            <input type="radio" name="lingua" id="ingles" value="1" checked>
                             <label for="ingles">Inglês</label>
                         </div>
                         <div>
-                            <input type="radio" name="lingua" id="espanhol" value="1">
+                            <input type="radio" name="lingua" id="espanhol" value="0">
                             <label for="espanhol">Espanhol</label>
                         </div>
                     </div>
@@ -124,23 +128,23 @@
                     </div>
                 </div>
                 <div class="w-full md:w-96 mt-8">
-                    <span class="font-semibold" id="">Questão 136</span>
+                    <span class="font-semibold" id="questoes-num">Questão</span>
                     <div class="mt-4 flex flex-col">
                         <div class="flex justify-between">
                             <span class="font-medium">Gabarito</span>
-                            <span class="" id="">A</span>
+                            <span class="" id="questoes-gab">-</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="font-medium">Dificuldade</span>
-                            <span class="" id="">MEDIA</span>
+                            <span class="" id="questoes-dif">-</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="font-medium">Competência</span>
-                            <span class="" id="">H30</span>
+                            <span class="" id="questoes-hab">-</span>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-medium">Questões Similares</span>
-                            <span class="" id="questoes-similares"></span>
+                            <span class="" id="questoes-similares">Clique em uma questão acima para obter informações sobre ela!</span>
                         </div>
                     </div>
                 </div>

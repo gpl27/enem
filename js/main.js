@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     anoDropdown.addEventListener("change", e => anoDropdownListener(CONTEXT));
     areaDropdown.addEventListener("change", e => areaDropdownListener(CONTEXT));
+    // linguaRadio.addEventListener("change", e => linguaRadioListener(CONTEXT));
     provaDropdown.addEventListener("change", async (e) => await provaDropdownListener(CONTEXT));
     submitButton.addEventListener("click", async (e) => await submitButtonListener(CONTEXT));
     
@@ -78,6 +79,7 @@ function anoDropdownListener(CONTEXT) {
     const provaDropdown = CONTEXT["provaDropdown"];
     const linguaRadio = CONTEXT["linguaRadio"];
     const respostasSection = CONTEXT["respostasSection"];
+    const resultadosSection = CONTEXT["resultadosSection"];
 
     const selectedYear = anoDropdown.value;
     const dataSelectedYear = CONTEXT["PROVAS"][selectedYear];
@@ -94,6 +96,7 @@ function anoDropdownListener(CONTEXT) {
         areaDropdown.disabled = false;
         provaDropdown.disabled = true;
         respostasSection.hidden = true;
+        resultadosSection.hidden = true;
         linguaRadio.classList.add("hidden");
     } else {
         areaDropdown.innerHTML = '<option value="">AREA</option>';
@@ -101,6 +104,7 @@ function anoDropdownListener(CONTEXT) {
         areaDropdown.disabled = true;
         provaDropdown.disabled = true;
         respostasSection.hidden = true;
+        resultadosSection.hidden = true;
         linguaRadio.classList.add("hidden");
     }
 }
@@ -112,6 +116,7 @@ function areaDropdownListener(CONTEXT) {
     const linguaRadio = CONTEXT["linguaRadio"];
     const PROVAS = CONTEXT["PROVAS"];
     const respostasSection = CONTEXT["respostasSection"];
+    const resultadosSection = CONTEXT["resultadosSection"];
 
     const selectedArea = areaDropdown.value;
     const dataSelectedArea = PROVAS[anoDropdown.value][selectedArea];
@@ -125,12 +130,14 @@ function areaDropdownListener(CONTEXT) {
         provas.forEach(element => createOption(provaDropdown, element));
         provaDropdown.disabled = false;
         respostasSection.hidden = true;
+        resultadosSection.hidden = true;
 
     } else {
         provaDropdown.innerHTML = '<option value="">PROVA</option>';
         areaDropdown.disabled = true;
         provaDropdown.disabled = true;
         respostasSection.hidden = true;
+        resultadosSection.hidden = true;
         linguaRadio.classList.add("hidden");
     }
 }
@@ -141,6 +148,7 @@ async function provaDropdownListener(CONTEXT) {
     const provaDropdown = CONTEXT["provaDropdown"];
     const PROVAS = CONTEXT["PROVAS"];
     const respostasSection = CONTEXT["respostasSection"];
+    const resultadosSection = CONTEXT["resultadosSection"];
     const gradeDiv = CONTEXT["gradeDiv"];
 
     const selectedProva = provaDropdown.value;
@@ -160,10 +168,13 @@ async function provaDropdownListener(CONTEXT) {
         addInputListeners();
         
         respostasSection.hidden = false;
+        resultadosSection.hidden = true;
+        gradeDiv.scrollIntoView({behavior: "smooth"});
     } else {
         // Nao temos uma prova selecionada
         CONTEXT["dataProva"] = {};
         respostasSection.hidden = true;
+        resultadosSection.hidden = true;
     }
     
 }
@@ -184,6 +195,9 @@ async function submitButtonListener(CONTEXT) {
         }
     }
     gabarito = gabarito.toUpperCase();
+    
+    // Clear Questoes similares
+    clearQuestoes();
 
     // Sanitize input
     // TODO
@@ -193,17 +207,15 @@ async function submitButtonListener(CONTEXT) {
     const areaDropdown = CONTEXT["areaDropdown"]
     const dataProva = CONTEXT["dataProva"];
     if (dataProva) {
-        // Clean questoes
-        document.getElementById("questoes-similares").innerHTML = '';
         let results = await calculateResults({
             "respostas": gabarito,
-            "dataProva": dataProva,
             "ano": anoDropdown.value,
             "area": areaDropdown.value
-        });
+        }, CONTEXT);
         // Display results
         await displayResults(results, CONTEXT);
         CONTEXT["resultadosSection"].hidden = false;
+        CONTEXT["resultadosSection"].scrollIntoView({ behavior: "smooth" });
 
     } else {
         console.log("Something went wrong...");
@@ -223,7 +235,7 @@ function createQuestao(num) {
     questao.classList.add("flex");
     questao.classList.add("w-fit");
     questao.innerHTML = `
-        <span class="w-10 h-9 flex justify-center items-center shadow rounded-l-md bg-indigo-50 hover:bg-indigo-100" id="q-${num}">${num}</span>
+        <span class="w-10 h-9 flex justify-center items-center shadow rounded-l-md cursor-pointer bg-indigo-50 hover:bg-indigo-100" id="q-${num}">${num}</span>
         <input class="w-7 h-9 indent-2 shadow rounded-r-md" type="text" maxlength="1" name="q-${num}-i" id="q-${num}-i">
     
     `
@@ -234,16 +246,6 @@ function createQuestao(num) {
 function addInputListeners() {
     // Get all text input elements within the 'grade' container
     const textInputs = document.querySelectorAll('#grade input[type="text"]');
-
-    // Get all span elements within the 'grade' container
-    const spanElements = document.querySelectorAll("#grade span");
-
-    spanElements.forEach(spanElement => {
-        spanElement.addEventListener('click', () => {
-            console.log(`Clicked item ${spanElement.id}`);
-            
-        });
-    });
 
     // Attach input event listener to each text input
     textInputs.forEach((textInput, index) => {
@@ -312,25 +314,56 @@ async function displayResults(results, CONTEXT) {
     document.getElementById("erros-facil").textContent = results["erros-facil"];
     document.getElementById("erros-medio").textContent = results["erros-medio"];
     document.getElementById("erros-dificil").textContent = results["erros-dificil"];
-    results["erros-habilidades"].forEach(async function (hab) {
-        let itensSimilares = await getItensSimilares(areaDropdown.value, hab);
-        let itens = [];
-        for (let key in itensSimilares) {
-            let itensAno = itensSimilares[key];
-            for (let item in itensAno) {
-                let firstProva = Object.keys(itensAno[item])[0];
-                let provaName = getProvaName(firstProva, PROVAS[key][areaDropdown.value]);
-                if (provaName)
-                    itens.push(`${key} ${provaName} ${itensAno[item][firstProva]}`);
+    // Get all span elements within the 'grade' container
+    const spanElements = document.querySelectorAll("#grade span");
+
+    spanElements.forEach(spanElement => {
+        spanElement.addEventListener('click', async () => {
+            let questao = spanElement.id.split('-')[1]
+            let hab = CONTEXT["dataProva"][questao]['CO_HABILIDADE'];
+            let itensSimilares = await getItensSimilares(areaDropdown.value, hab);
+            let itens = [];
+            for (let key in itensSimilares) {
+                let itensAno = itensSimilares[key];
+                for (let item in itensAno) {
+                    let firstProva = Object.keys(itensAno[item])[0];
+                    let provaName = getProvaName(firstProva, PROVAS[key][areaDropdown.value]);
+                    if (provaName)
+                        itens.push(`${key} ${provaName} ${itensAno[item][firstProva]}`);
+                }
             }
-        }
-        addHabilidade(hab, itens);
-    })
+            document.getElementById('questoes-num').innerHTML = `Questão ${questao}`;
+            document.getElementById('questoes-gab').innerHTML = CONTEXT["dataProva"][questao]["TX_GABARITO"];
+            let param_B = CONTEXT["dataProva"][questao]["NU_PARAM_B"]
+            document.getElementById('questoes-dif').innerHTML = (param_B < 1.5) ? "FACIL" : (param_B < 2) ? "MEDIO" : "DIFICIL" ;
+            document.getElementById('questoes-hab').innerHTML = `H${hab}`;
+            addHabilidade(hab, itens);
+            CONTEXT['resultadosSection'].scrollIntoView({ behavior: "smooth" });
+        });
+    });
 
 }
 
-async function calculateResults(data) {
-    let dataProva = data["dataProva"];
+async function calculateResults(data, CONTEXT) {
+    let dataProvaTmp = CONTEXT["dataProva"];
+    let dataProva = {};
+    let lingua = -1
+    if (data["area"] == "LC") {
+        // Filter by chosen language
+        const opcaoIngles = document.getElementById("ingles");
+        const opcaoEspanhol = document.getElementById("espanhol");
+        if (opcaoIngles.checked) {
+            lingua = opcaoIngles.value;
+        } else if (opcaoEspanhol.checked) {
+            lingua = opcaoEspanhol.value;
+        }
+        Object.keys(dataProvaTmp)
+              .filter(q => q.substring(1) !== `-${lingua}`)
+              .forEach(q => dataProva[q.split('-')[0]] = dataProvaTmp[q]);
+    } else {
+        dataProva = dataProvaTmp;
+    }
+    CONTEXT["dataProva"] = dataProva;
     let respostas = data["respostas"];
     let results = {
         "acertos": 0,
@@ -341,14 +374,15 @@ async function calculateResults(data) {
         "erros-facil": 0,
         "erros-medio": 0,
         "erros-dificil": 0,
-        "erros-habilidades": new Set()
+        "habilidades": {}
     }
     let i = 0;
     let dificuldade = "";
     let param_B = 0;
     for (let key in dataProva) {
         param_B = dataProva[key]['NU_PARAM_B'];
-        dificuldade = (param_B < 1.5) ? "facil" : (param_B < 2) ? "medio" : "dificil"
+        dificuldade = (param_B < 1.5) ? "facil" : (param_B < 2) ? "medio" : "dificil";
+        results["habilidades"][key] = dataProva[key]['CO_HABILIDADE'];
         if (dataProva[key]['TX_GABARITO'] == 'X') {
             i++;
             continue;
@@ -356,10 +390,13 @@ async function calculateResults(data) {
         if (respostas[i] === dataProva[key]['TX_GABARITO']){
             results["acertos"]++;
             results[`acertos-${dificuldade}`]++;
+            let currentColor = document.getElementById(`q-${key}`).getAttribute("class").split(' ').find(c => c.slice(0, 2) == "bg");
+            document.getElementById(`q-${key}`).classList.replace(currentColor, "bg-green-100");
         } else {
             results["erros"]++;
             results[`erros-${dificuldade}`]++;
-            results["erros-habilidades"].add(dataProva[key]['CO_HABILIDADE']);
+            let currentColor = document.getElementById(`q-${key}`).getAttribute("class").split(' ').find(c => c.slice(0, 2) == "bg");
+            document.getElementById(`q-${key}`).classList.replace(currentColor, "bg-red-100");
         }
         i++;
     }
@@ -389,8 +426,8 @@ function getProvaName(co_prova, data) {
 
 function addHabilidade(hab, itens) {
     const questoesCard = document.getElementById("questoes-similares");
+    questoesCard.innerHTML = '';
     const ul = document.createElement("ul");
-    ul.innerText = `H${hab}`;
     ul.className = "list-disc my-4 mx-10"
     itens.forEach(item => {
         let li = document.createElement("li")
@@ -398,4 +435,11 @@ function addHabilidade(hab, itens) {
         ul.appendChild(li);
     })
     questoesCard.appendChild(ul);
+}
+
+function clearQuestoes() {
+    document.getElementById("questoes-num").innerHTML = 'Questão';
+    document.getElementById("questoes-gab").innerHTML = '-';
+    document.getElementById("questoes-hab").innerHTML = '-';
+    document.getElementById("questoes-similares").innerHTML = 'Clique em uma questão acima para obter informações sobre ela!';
 }
